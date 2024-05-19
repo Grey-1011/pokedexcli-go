@@ -7,7 +7,8 @@ import (
 	"strings"
 )
 
-func startRepl() {
+// 指针允许我们直接操作内存中的数据，而无需复制或重复数据
+func startRepl(cfg *config) {
 	// 创建一个 Scanner 以从标准输入读取数据
 	scanner := bufio.NewScanner(os.Stdin)
 
@@ -20,25 +21,31 @@ func startRepl() {
 		cleaned := cleanInput(text)
 		if len(cleaned) == 0 {
 			continue
+			// 停止当前循环跌代, 并继续到下一次迭代
 		}
 		
 		commandName := cleaned[0]
-
+		// availableCommands: map[string]cliCommand
 		availableCommands := getCommands()
 
 		command, ok := availableCommands[commandName]
+		// command 是 map 的 value
 		if !ok {
 			fmt.Println("invalid command")
 			continue
 		}
-		command.callback()
+		
+		err := command.callback(cfg)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 }
 
 type cliCommand struct {
 	name string
 	description string
-	callback func() error
+	callback func(*config) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -48,11 +55,21 @@ func getCommands() map[string]cliCommand {
 			description: "Displays a help message",
 			callback: callbackHelp,
 		},
+		"map": {
+			name: "map",
+			description: "Lists the next page of location areas",
+			callback: callbackMap,
+		},
+		"mapb": {
+			name: "mapb",
+			description: "Lists the previous page of location areas",
+			callback: callbackMapb,
+		},
 		"exit": {
 			name: "exit",
 			description: "Exit the Pokedex",
 			callback: callbackExit,
-	},
+		},
 	}
 }
 
