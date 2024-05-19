@@ -14,6 +14,22 @@ func (c *Client) ListLocationAreas(pageURL *string) (LocationAreasResp, error) {
 		fullURL = *pageURL
 	}
 
+	// check the cache
+	dat, ok := c.cache.Get(fullURL)
+	if ok {
+		// cache hit
+		fmt.Println("cache hit!")
+		locationAreasResp := LocationAreasResp{}
+		// 用于将 JSON 数据解码到 Go 语言中的结构体或其他数据类型中。
+		err := json.Unmarshal(dat, &locationAreasResp)
+		if err != nil {
+			return LocationAreasResp{}, err
+		}
+
+		return locationAreasResp, nil
+	}
+	fmt.Println("cache miss!")
+
 	req, err := http.NewRequest("GET", fullURL, nil)
 	if err != nil {
 		return LocationAreasResp{}, err
@@ -29,16 +45,20 @@ func (c *Client) ListLocationAreas(pageURL *string) (LocationAreasResp, error) {
 		return LocationAreasResp{}, fmt.Errorf("bad status code: %v", resp.StatusCode)
 	}
 
-	dat, err := io.ReadAll(resp.Body)
+	dat, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return LocationAreasResp{}, err
 	}
 	
 	locationAreasResp := LocationAreasResp{}
+	// 用于将 JSON 数据解码到 Go 语言中的结构体或其他数据类型中。
 	err = json.Unmarshal(dat, &locationAreasResp)
 	if err != nil {
 		return LocationAreasResp{}, err
 	}
+
+	// add cache
+	c.cache.Add(fullURL, dat)
 
 	return locationAreasResp, nil
 }

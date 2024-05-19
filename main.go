@@ -1,10 +1,13 @@
 package main
 
-import "github.com/Grey-1011/pokedexcli/internal/pokeapi"
+import (
+	"time"
+
+	"github.com/Grey-1011/pokedexcli/internal/pokeapi"
+)
 
 //"fmt"
 //"log"
-
 
 /*
 Go programs are organized into packages.
@@ -36,7 +39,7 @@ func main() {
 	// fmt.Println(resp)
 
 	cfg := config {
-		pokeapiClient: pokeapi.NewClient(),
+		pokeapiClient: pokeapi.NewClient(time.Hour),
 	}
 
 	startRepl(&cfg)

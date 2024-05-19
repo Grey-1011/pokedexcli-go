@@ -3,6 +3,8 @@ package pokeapi
 import (
 	"net/http"
 	"time"
+
+	"github.com/Grey-1011/pokedexcli/internal/pokecache"
 )
 
 const baseURL = "https://pokeapi.co/api/v2"
@@ -12,11 +14,13 @@ const baseURL = "https://pokeapi.co/api/v2"
 
 // no default Client
 type Client struct {
+	cache pokecache.Cache
 	httpClient http.Client
 }
 // export Client struct
-func NewClient() Client {
+func NewClient(cacheInterval time.Duration) Client {
 	return Client{
+		cache: pokecache.NewCache(cacheInterval),
 		httpClient: http.Client{
 			Timeout: time.Minute,
 		},
