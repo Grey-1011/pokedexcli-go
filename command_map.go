@@ -6,7 +6,7 @@ import (
 	//"github.com/Grey-1011/pokedexcli/internal/pokeapi"
 )
 
-func callbackMap(cfg *config) error {
+func callbackMap(cfg *config, args ...string) error {
 	// pokeapiClient := pokeapi.NewClient()  <=>  等价于下一行
 	pokeapiClient := cfg.pokeapiClient
 
@@ -29,7 +29,7 @@ func callbackMap(cfg *config) error {
 
 
 
-func callbackMapb(cfg *config) error {
+func callbackMapb(cfg *config, args ...string) error {
 	if cfg.prevLocationAreaURL == nil {
 		return errors.New("you're on the first page")
 	}
