@@ -24,10 +24,19 @@ Go 程序被组织成包。
 */
 
 type config struct {
-	pokeapiClient pokeapi.Client
+	pokeapiClient 			pokeapi.Client
 	nextLocationAreaURL *string
 	prevLocationAreaURL *string // 这里用 指针 *string, 只是为了可以为空
+	caughtPokemon 			map[string]pokeapi.Pokemon
+	// 在 config 中添加存储 捕获到的 pokemon
+	// 因为这是整个应用程序的共享状态
+	/*
+	潜在风险, map 不是线程安全的
+	但这里并不会发生并发(同时对map读写), 所以暂时可以这样写
+	如果要解决就要使用 mutex
+	*/
 }
+
 
 func main() {
 	// pokeapiClient := pokeapi.NewClient()
@@ -40,6 +49,7 @@ func main() {
 
 	cfg := config {
 		pokeapiClient: pokeapi.NewClient(time.Hour),
+		caughtPokemon: make(map[string]pokeapi.Pokemon),
 	}
 
 	startRepl(&cfg)

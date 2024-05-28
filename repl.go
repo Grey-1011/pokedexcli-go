@@ -39,7 +39,9 @@ func startRepl(cfg *config) {
 			fmt.Println("invalid command")
 			continue
 		}
-		
+		//调用函数时传递变长参数:
+		/*args 是一个切片, 使用 `...` 语法来展开切片 
+		*/
 		err := command.callback(cfg, args...)
 		if err != nil {
 			fmt.Println(err)
@@ -71,9 +73,14 @@ func getCommands() map[string]cliCommand {
 			callback: callbackMapb,
 		},
 		"explore": {
-			name: "explore <area_name>",
+			name: "explore {area_name}",
 			description: "Lists the pokemon in a location area",
 			callback: callbackExplore,
+		},
+		"catch": {
+			name: "catch {pokemon_name}",
+			description: "Attemp to catch a pokemon and it to your pokedex",
+			callback: callbackCatch,
 		},
 		"exit": {
 			name: "exit",
